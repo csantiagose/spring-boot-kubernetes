@@ -20,23 +20,15 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 
-- task: SonarCloudPrepare@1
+- task: Maven@4
   inputs:
-    SonarCloud: 'sonar'
-    organization: 'csantiagos'
-    scannerMode: 'Other'
-- task: Gradle@3
-  inputs:
-    gradleWrapperFile: 'gradlew'
-    tasks: 'build'
+    mavenPomFile: 'pom.xml'
     publishJUnitResults: true
-    testResultsFiles: '**/TEST-*.xml'
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
     javaHomeOption: 'JDKVersion'
+    mavenVersionOption: 'Default'
+    mavenAuthenticateFeed: false
+    effectivePomSkip: false
     sonarQubeRunAnalysis: true
-    sqGradlePluginVersionChoice: 'specify'
-    sonarQubeGradlePluginVersion: '2.6.1'
-    spotBugsAnalysis: false
-- task: SonarCloudPublish@1
-  inputs:
-    pollingTimeoutSec: '300'
-- task: SonarCloudAnalyze@1
+    sqMavenPluginVersionChoice: 'latest'
+
