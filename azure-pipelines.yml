@@ -28,3 +28,5 @@ steps:
     scannerMode: 'MSBuild'
     projectKey: '13d95e66f41a6e9e451271fde4a4f9a67f8f363a'
     projectName: 'csantiagos'
+
+- task: SonarCloudAnalyze@1
