@@ -24,7 +24,7 @@ steps:
 - task: SonarCloudAnalyze@1
   displayName: Sonar
   inputs:
-projectName: 'PICO'
-SonarCloud: 'csantiagos'
-organization: 'csantiagos'
-projectKey: 'csantiagos'
+          projectName: 'csantiagos'
+          SonarCloud: 'csantiagos'
+          organization: 'csantiagos'
+          projectKey: 'csantiagos'
