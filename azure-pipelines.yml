@@ -20,16 +20,14 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 
-
 - task: SonarCloudPrepare@1
   inputs:
     SonarCloud: 'sonar'
     organization: 'csantiagos'
-    scannerMode: 'MSBuild'
-    projectKey: '13d95e66f41a6e9e451271fde4a4f9a67f8f363a'
-    projectName: 'csantiagos'
-- task: SonarCloudAnalyze@1
+    scannerMode: 'Other'
+
+- task: SonarCloudPublish@1
   inputs:
-    SonarCloud: 'csantiagos'
-    organization: 'csantiagos'
-    projectKey: 'csantiagos'
+    pollingTimeoutSec: '300'
+
+- task: SonarCloudAnalyze@1
