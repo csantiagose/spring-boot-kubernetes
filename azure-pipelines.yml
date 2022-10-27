@@ -33,4 +33,3 @@ steps:
     SonarCloud: 'csantiagos'
     organization: 'csantiagos'
     projectKey: 'csantiagos'
-    projectName: 'csantiagos'
