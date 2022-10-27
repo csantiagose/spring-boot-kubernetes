@@ -25,13 +25,6 @@ steps:
     SonarCloud: 'sonar'
     organization: 'csantiagos'
     scannerMode: 'Other'
-
-- task: SonarCloudPublish@1
-  inputs:
-    pollingTimeoutSec: '300'
-
-- task: SonarCloudAnalyze@1
-
 - task: Gradle@3
   inputs:
     gradleWrapperFile: 'gradlew'
@@ -43,3 +36,7 @@ steps:
     sqGradlePluginVersionChoice: 'specify'
     sonarQubeGradlePluginVersion: '2.6.1'
     spotBugsAnalysis: false
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '300'
+- task: SonarCloudAnalyze@1
