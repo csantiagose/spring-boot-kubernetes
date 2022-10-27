@@ -13,27 +13,24 @@ pool: default
 
 steps:
 - script: echo Hello, world!
-  displayName: 'chumascalo adrian'
+  displayName: 'lab devsecops'
 
 - script: |
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  displayName: 'Script'
 
+- task: MavenAuthenticate@0
+  inputs:
+    artifactsFeeds: 'csantiagos'
 - task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    testRunTitle: 'maven'
     javaHomeOption: 'JDKVersion'
     mavenVersionOption: 'Default'
     mavenAuthenticateFeed: false
     effectivePomSkip: false
     sonarQubeRunAnalysis: true
-    sqMavenPluginVersionChoice: 'pom'
-    checkStyleRunAnalysis: true
-    pmdRunAnalysis: true
-    findBugsRunAnalysis: true
-    spotBugsRunAnalysis: true
-    spotBugsGoal: 'check'
+    sqMavenPluginVersionChoice: 'latest'
