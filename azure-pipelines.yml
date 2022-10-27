@@ -21,10 +21,10 @@ steps:
   displayName: 'Run a multi-line script'
 
 
-- task: SonarCloudAnalyze@1
-  displayName: Sonar
+- task: SonarCloudPrepare@1
   inputs:
-          projectName: 'csantiagos'
-          SonarCloud: 'csantiagos'
-          organization: 'csantiagos'
-          projectKey: 'csantiagos'
+    SonarCloud: 'sonar'
+    organization: 'csantiagos'
+    scannerMode: 'MSBuild'
+    projectKey: '13d95e66f41a6e9e451271fde4a4f9a67f8f363a'
+    projectName: 'csantiagos'
