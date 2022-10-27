@@ -8,7 +8,7 @@ trigger:
 
 # pool:
 #   vmImage: ubuntu-latest
-pool: csalienwarenbt
+pool: CSALIENWARENBT
 
 
 steps:
