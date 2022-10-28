@@ -33,6 +33,10 @@ stages:
 			  projectKey: 'csantiagos'
 			  projectName: 'csantiagos'
 
+
+
+
+
 - task: Maven@4
 		inputs:
 			  mavenPomFile: 'pom.xml'
@@ -41,7 +45,7 @@ stages:
 			  javaHomeOption: 'JDKVersion'
 			  mavenVersionOption: 'Default'
 			  sonarQubeRunAnalysis: true
-	
+
 - stage: SCA 
   jobs:
   - job: SCA
