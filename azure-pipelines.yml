@@ -16,7 +16,7 @@ stages:
     steps:
 
 - task: Maven@4
-      inputs:
+    inputs:
         mavenPomFile: 'pom.xml'
         publishJUnitResults: true
         testResultsFiles: '*/surefire-reports/TEST-.xml'
@@ -27,14 +27,14 @@ stages:
         sonarQubeRunAnalysis: false
 
 - task: SonarCloudPrepare@1
-		  inputs:
+		inputs:
 			  SonarCloud: 'sonar'
 			  organization: 'csantiagos'
 			  projectKey: 'csantiagos'
 			  projectName: 'csantiagos'
 
 - task: Maven@4
-		  inputs:
+		inputs:
 			  mavenPomFile: 'pom.xml'
 			  publishJUnitResults: true
 			  testResultsFiles: '**/surefire-reports/TEST-*.xml'
