@@ -92,3 +92,4 @@ stages:
         sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
         trivy image csantiagos/docker-csantiagos:latest
       displayName: 5 escaneo de imagen
+      
