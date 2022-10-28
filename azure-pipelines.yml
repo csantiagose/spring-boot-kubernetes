@@ -54,58 +54,12 @@ stages:
         scanPath: '$(Build.ArtifactStagingDirectory)'
         format: 'HTML'
 
-# - stage: ContainerSecurity 
-#   jobs:
-#   - job: ContainerSecurity
-#     displayName: '3 ContainerSecurity'
-#     steps:
-#     - task: Maven@3
-#       inputs:
-#         mavenPomFile: 'pom.xml'
-#         publishJUnitResults: true
-#         testResultsFiles: '*/surefire-reports/TEST-.xml'
-#         javaHomeOption: 'JDKVersion'
-#         mavenVersionOption: 'Default'
-#         mavenAuthenticateFeed: false
-#         effectivePomSkip: false
-#         sonarQubeRunAnalysis: false
-#     - task: DockerInstaller@0
-#       inputs:
-#         dockerVersion: '17.09.0-ce'
-
-#     - task: Docker@2
-#       inputs:
-#         containerRegistry: 'Docker'
-#         command: 'login'
-#     - task: Docker@2
-#       inputs:
-#         containerRegistry: 'Docker'
-#         repository: 'csantiagos/devops-csantiagos'
-#         command: 'build'
-#         Dockerfile: '**/Dockerfile'
-#         tags: latest
-#       displayName: 4 Build Image
-
-#     - script: | 
-#         sudo apt-get install -y rpm
-#         wget https://github.com/aquasecurity/trivy/releases/download/v0.27.1/trivy_0.27.1_Linux-64bit.deb
-#         sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
-#         trivy image csantiagos/devops-csantiagos:latest
-#       displayName: Image Scan
-#     - task: Docker@2
-#       displayName: Docker push
-#       inputs:
-#         containerRegistry: 'Docker'
-#         repository: 'csantiagos/devops-csantiagos'
-#         command: 'push'
-
 - stage: ContainerSecurity 
   jobs:
   - job: ContainerSecurity
     displayName: '3 ContainerSecurity'
     steps:
-    
-	- task: Maven@3
+    - task: Maven@3
       inputs:
         mavenPomFile: 'pom.xml'
         publishJUnitResults: true
@@ -115,22 +69,26 @@ stages:
         mavenAuthenticateFeed: false
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
+    # - task: DockerInstaller@0
+    #   inputs:
+    #     dockerVersion: '17.09.0-ce'
+
     - task: Docker@2
       inputs:
         containerRegistry: 'Docker'
         command: 'login'
-    
-	- task: Docker@2
+    - task: Docker@2
       inputs:
         containerRegistry: 'Docker'
         repository: 'csantiagos/csantiagos'
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
         tags: latest
+      displayName: 4 contruir imagen
 
     - script: | 
         sudo apt-get install -y rpm
         wget https://github.com/aquasecurity/trivy/releases/download/v0.27.1/trivy_0.27.1_Linux-64bit.deb
         sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
-        trivy image csantiagos/csantiagos:latest
-      displayName: Image Scan
+        trivy image csantiagos/devops-csantiagos:latest
+      displayName: 5 escaneo de imagen
