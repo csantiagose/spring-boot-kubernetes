@@ -20,7 +20,7 @@ stages:
         SonarCloud: 'Sonar'
         organization: 'csantiagos'
         scannerMode: 'Other'
-        extraProperties: |
+        extraProperties:
             sonar.projectKey=csantiagos
             sonar.projectName=csantiagos
     - task: Maven@4
