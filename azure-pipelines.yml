@@ -24,7 +24,7 @@ stages:
         mavenVersionOption: 'Default'
         mavenAuthenticateFeed: false
         effectivePomSkip: false
-        sonarQubeRunAnalysis: false   
+        sonarQubeRunAnalysis: false
 
 	- task: SonarCloudPrepare@1
 		inputs:
