@@ -75,11 +75,11 @@ stages:
 
     - task: Docker@2
       inputs:
-        containerRegistry: 'Docker'
+        containerRegistry: 'docker-csantiagos'
         command: 'login'
     - task: Docker@2
       inputs:
-        containerRegistry: 'Docker'
+        containerRegistry: 'docker-csantiagos'
         repository: 'csantiagos/docker-csantiagos'
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
