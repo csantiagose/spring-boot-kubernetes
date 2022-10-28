@@ -84,12 +84,12 @@ stages:
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
         tags: latest
-      displayName: 4 contruir imagen
+      displayName: Construir imagen
 
     - script: | 
         sudo apt-get install -y rpm
         wget https://github.com/aquasecurity/trivy/releases/download/v0.27.1/trivy_0.27.1_Linux-64bit.deb
         sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
         trivy image csantiagos/docker-csantiagos:latest
-      displayName: 5 escaneo de imagen
+      displayName: Escaneo de imagen
       
