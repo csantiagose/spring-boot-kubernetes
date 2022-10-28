@@ -53,3 +53,19 @@ stages:
         projectName: 'spring-boot-kubernetes'
         scanPath: '$(Build.ArtifactStagingDirectory)'
         format: 'HTML'
+
+- stage: ContainerSecurity 
+  jobs:
+  - job: ContainerSecurity
+    displayName: 'ContainerSecurity'
+    steps:
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '*/surefire-reports/TEST-.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
