@@ -15,7 +15,7 @@ stages:
     displayName: 'SAST'
     steps:
 
-    - task: Maven@4
+- task: Maven@4
       inputs:
         mavenPomFile: 'pom.xml'
         publishJUnitResults: true
@@ -26,14 +26,14 @@ stages:
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
 
-	- task: SonarCloudPrepare@1
+- task: SonarCloudPrepare@1
 		  inputs:
 			  SonarCloud: 'sonar'
 			  organization: 'csantiagos'
 			  projectKey: 'csantiagos'
 			  projectName: 'csantiagos'
-    
-	- task: Maven@4
+
+- task: Maven@4
 		  inputs:
 			  mavenPomFile: 'pom.xml'
 			  publishJUnitResults: true
