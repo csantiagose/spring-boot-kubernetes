@@ -20,9 +20,6 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Script'
 
-- task: MavenAuthenticate@0
-  inputs:
-    artifactsFeeds: 'csantiagos'
 - task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
