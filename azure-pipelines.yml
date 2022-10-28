@@ -17,10 +17,12 @@ stages:
 
     - task: SonarCloudPrepare@1
       inputs:
-        SonarCloud: 'sonar'
+        SonarCloud: 'Sonar'
         organization: 'csantiagos'
-        projectKey: 'csantiagos'
-        projectName: 'csantiagos'
+        scannerMode: 'Other'
+        extraProperties: |
+            sonar.projectKey=csantiagos
+            sonar.projectName=csantiagos
     - task: Maven@4
       inputs:
         mavenPomFile: 'pom.xml'
