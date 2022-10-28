@@ -27,20 +27,20 @@ stages:
         sonarQubeRunAnalysis: false
 
 	- task: SonarCloudPrepare@1
-		inputs:
-			SonarCloud: 'sonar'
-			organization: 'csantiagos'
-			projectKey: 'csantiagos'
-			projectName: 'csantiagos'
+		  inputs:
+			  SonarCloud: 'sonar'
+			  organization: 'csantiagos'
+			  projectKey: 'csantiagos'
+			  projectName: 'csantiagos'
     
 	- task: Maven@4
-		inputs:
-			mavenPomFile: 'pom.xml'
-			publishJUnitResults: true
-			testResultsFiles: '**/surefire-reports/TEST-*.xml'
-			javaHomeOption: 'JDKVersion'
-			mavenVersionOption: 'Default'
-			sonarQubeRunAnalysis: true
+		  inputs:
+			  mavenPomFile: 'pom.xml'
+			  publishJUnitResults: true
+			  testResultsFiles: '**/surefire-reports/TEST-*.xml'
+			  javaHomeOption: 'JDKVersion'
+			  mavenVersionOption: 'Default'
+			  sonarQubeRunAnalysis: true
 	
 - stage: SCA 
   jobs:
@@ -97,7 +97,7 @@ stages:
         command: 'build'
         Dockerfile: '**/Dockerfile'
         tags: latest
-      displayName: Build Image
+        displayName: Build Image
 
     - script: | 
         sudo apt-get install -y rpm
