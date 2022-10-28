@@ -93,9 +93,9 @@ stages:
         trivy image csantiagos/devops-csantiagos:latest
       displayName: Image Scan
     - task: Docker@2
-      displayName: Docker push
+      #displayName: Docker push
       inputs:
         containerRegistry: 'Docker'
         repository: 'csantiagos/devops-csantiagos'
         command: 'push'
-        tags: 'latest'
+      #tags: 'latest'
