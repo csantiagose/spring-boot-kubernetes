@@ -111,4 +111,5 @@ stages:
         mergeTestResults: true
         failTaskOnFailedTests: true
         testRunTitle: 'Trivy'
-      #condition: 'always()'
+      condition: 'always()'
+
