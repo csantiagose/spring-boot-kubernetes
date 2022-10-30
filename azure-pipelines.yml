@@ -1,4 +1,5 @@
 # Starter pipeline
+
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
@@ -6,139 +7,128 @@
 trigger:
 - master
 
-pool: default
+pool: Default
 
 stages:
-
-- stage: SAST 
-  jobs:
-  - job: SAST
-    displayName: '1 SAST'
-    steps:
-
-    - task: SonarCloudPrepare@1
-      displayName: 'Sonar Cloud'
-      inputs:
-        SonarCloud: 'Sonar'
-        organization: 'csantiagos'
-        scannerMode: 'Other'
-        extraProperties: |
-            sonar.projectKey=csantiagos
-            sonar.projectName=csantiagos
-    - task: Maven@4
-      displayName: 'Analisis Codigo - Maven'
-      inputs:
-        mavenPomFile: 'pom.xml'
-        publishJUnitResults: false
-        codeCoverageToolOption: 'JaCoCo'
-        javaHomeOption: 'JDKVersion'
-        mavenVersionOption: 'Default'
-        goals: clean package -DskipTests
-        mavenAuthenticateFeed: false
-        effectivePomSkip: false
-        sonarQubeRunAnalysis: true
-	      isJacocoCoverageReportXML: true
-        sqMavenPluginVersionChoice: 'latest'
-	      checkStyleRunAnalysis: true
-        pmdRunAnalysis: true
-        findBugsRunAnalysis: true
-
-
-
-    - task: sonarcloud-buildbreaker@2
-      displayName: 'Sonar Cloud Breaker'
-      inputs:
-        SonarCloud: 'csantiagos'
-        organization: 'csantiagos'
-
-    - task: SonarCloudPublish@1
-      displayName: 'Publicacion SonarCloud'
-      inputs:
-        pollingTimeoutSec: '60'
-
-- stage: SCA 
-    jobs:
-  - job: SCA
-    displayName: '2 SCA'
-    steps:
-    - task: Maven@3
-      inputs:
-        mavenPomFile: 'pom.xml'
-        publishJUnitResults: true
-        testResultsFiles: '*/surefire-reports/TEST-.xml'
-        javaHomeOption: 'JDKVersion'
-        mavenVersionOption: 'Default'
-        mavenAuthenticateFeed: false
-        effectivePomSkip: false
-        sonarQubeRunAnalysis: false
-    - script: find $(Build.SourcesDirectory) -name "*.jar"
-    - task: dependency-check-build-task@6
-      displayName: 'Analisis de dependencias'
-      inputs:
-        projectName: 'Scan librerias'
-        scanPath: '**/*.jar'
-        format: 'HTML'
-        failOnCVSS: '7'
+################## Step 1 SAST ##################
+ - stage: SAST
+   jobs:
+   - job: SAST
+     displayName: 'Static Analysis and Security Testing'
+     steps:
+     - task: SonarCloudPrepare@1
+       displayName: 'Preparacion Sonar Cloud'
+       inputs:
+         SonarCloud: 'Sonar'
+         organization: 'csantiagos'
+         scannerMode: 'Other'
+         extraProperties: |
+             sonar.projectKey=csantiagos
+             sonar.projectName=csantiagos
+     - task: Maven@4
+       displayName: 'Analisis Maven'
+       inputs:
+         mavenPomFile: 'pom.xml'
+         publishJUnitResults: false
+         codeCoverageToolOption: 'JaCoCo'
+         javaHomeOption: 'JDKVersion'
+         mavenVersionOption: 'Default'
+         mavenAuthenticateFeed: false
+         effectivePomSkip: false
+         sonarQubeRunAnalysis: true
+         isJacocoCoverageReportXML: true
+         sqMavenPluginVersionChoice: 'latest'
+         checkStyleRunAnalysis: true
+         pmdRunAnalysis: true
+         findBugsRunAnalysis: true
+     - task: sonarcloud-buildbreaker@2
+       displayName: 'Breaker'
+       inputs:
+         SonarCloud: 'Sonar'
+         organization: 'csantiagos'
+     - task: SonarCloudPublish@1
+       displayName: 'Publicacion reporte SonarCloud'
+       inputs:
+         pollingTimeoutSec: '300'
 
 
-- stage: ContainerSecurity 
-  jobs:
-  - job: ContainerSecurity
-    displayName: '3 ContainerSecurity'
-    steps:
-    - task: Maven@3
-      displayName: Build app - Maven
-      inputs:
-        mavenPomFile: 'pom.xml'
-        publishJUnitResults: true
-        testResultsFiles: '*/surefire-reports/TEST-.xml'
-        javaHomeOption: 'JDKVersion'
-        mavenVersionOption: 'Default'
-        mavenAuthenticateFeed: false
-        effectivePomSkip: false
-        sonarQubeRunAnalysis: false
+ - stage: SCA
+   jobs:
+    - job: SCA
+      displayName: 'SCA'
+      steps:
+      - task: Maven@3
+        inputs:
+          mavenPomFile: 'pom.xml'
+          publishJUnitResults: true
+          testResultsFiles: '*/surefire-reports/TEST-.xml'
+          javaHomeOption: 'JDKVersion'
+          mavenVersionOption: 'Default'
+          mavenAuthenticateFeed: false
+          effectivePomSkip: false
+          sonarQubeRunAnalysis: false
+      - task: dependency-check-build-task@6
+        inputs:
+          projectName: 'spring-boot-kubernetes'
+          scanPath: '**/*.jar'
+          format: 'HTML'
+          failOnCVSS: '7'
 
-    - task: Docker@2
-      displayName: 'Registro de docker'
-      inputs:
-        containerRegistry: 'docker-csantiagos'
-        command: 'login'
-    - task: Docker@2
-      inputs:
-        containerRegistry: 'docker-csantiagos'
-        repository: 'csantiagos/docker-csantiagos'
-        command: 'buildAndPush'
-        Dockerfile: '**/Dockerfile'
-        tags: latest
-      
+################## Step 2 CS ##################
+ - stage: CS
+   jobs:
+   - job: CS
+     displayName: 'Container Security'
+     steps:  
+     - task: Maven@4
+       displayName: Build app - Maven
+       inputs:
+         mavenPomFile: 'pom.xml'
+         publishJUnitResults: true
+         testResultsFiles: '*/surefire-reports/TEST-.xml'
+         javaHomeOption: 'JDKVersion'
+         mavenVersionOption: 'Default'
+         mavenAuthenticateFeed: false
+         effectivePomSkip: false
+         sonarQubeRunAnalysis: false
+     - task: Docker@2
+       displayName: 'Registro de docker'
+       inputs:
+         containerRegistry: 'docker-csantiagos'
+         command: 'login'
+     - task: Docker@2
+       displayName: 'Build and Push'
+       inputs:
+         containerRegistry: 'docker-csantiagos'
+         repository: 'csantiagos/docker-csantiagos'
+         command: 'buildAndPush'
+         Dockerfile: '**/Dockerfile'
+         tags: 'latest'
+     - script: |
+         sudo apt-get install -y rpm
+         wget https://github.com/aquasecurity/trivy/releases/download/v0.27.1/trivy_0.27.1_Linux-64bit.deb
+         sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
+         trivy image adrianvirus/laboratorio:latest
+       displayName: 'Scanner de Imagen Docker'
+     - task: CmdLine@2
+       displayName: Scan
+       inputs:
+         script: |
+           docker run -v /var/run/docker.sock:/var/run/docker.sock -v $PWD:/app --rm aquasec/trivy image --severity HIGH,CRITICAL --no-progress --format template --template "@contrib/junit.tpl" -o /app/junit-report.xml csantiagos/docker-csantiagos:latest
+           cp junit-report.xml $(Build.ArtifactStagingDirectory)/junit-report.xml
 
-    - script: | 
-        sudo apt-get install -y rpm
-        wget https://github.com/aquasecurity/trivy/releases/download/v0.27.1/trivy_0.27.1_Linux-64bit.deb
-        sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
-        trivy image csantiagos/docker-csantiagos:latest
-      displayName: Escaneo de imagen
-      
-    - task: CmdLine@2
-      displayName: Scan
-      inputs:
-        script: |
-          docker run -v /var/run/docker.sock:/var/run/docker.sock -v $PWD:/app --rm aquasec/trivy image --severity HIGH,CRITICAL --no-progress --format template --template "@contrib/junit.tpl" -o /app/junit-report.xml csantiagos/docker-csantiagos:latest
-          cp junit-report.xml $(Build.ArtifactStagingDirectory)/junit-report.xml
+     - task: PublishBuildArtifacts@1
+       inputs:
+         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+         ArtifactName: 'drop'
+         publishLocation: 'Container'
 
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'drop'
-        publishLocation: 'Container'
-
-    #Publicación de los resultados del análisis
-    - task: PublishTestResults@2
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**/junit-*.xml'
-        mergeTestResults: true
-        failTaskOnFailedTests: true
-        testRunTitle: 'Trivy'
-      condition: 'always()'
-
+     #Publicación de los resultados del análisis
+     - task: PublishTestResults@2
+       inputs:
+         testResultsFormat: 'JUnit'
+         testResultsFiles: '**/junit-*.xml'
+         mergeTestResults: true
+         failTaskOnFailedTests: true
+         testRunTitle: 'Trivy'
+       condition: 'always()'
