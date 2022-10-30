@@ -17,6 +17,7 @@ stages:
     steps:
 
     - task: SonarCloudPrepare@1
+      displayName: 'Sonar Cloud'
       inputs:
         SonarCloud: 'Sonar'
         organization: 'csantiagos'
@@ -25,16 +26,38 @@ stages:
             sonar.projectKey=csantiagos
             sonar.projectName=csantiagos
     - task: Maven@4
+      displayName: 'Analisis Codigo - Maven'
       inputs:
         mavenPomFile: 'pom.xml'
-        publishJUnitResults: true
-        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        publishJUnitResults: false
+        codeCoverageToolOption: 'JaCoCo'
         javaHomeOption: 'JDKVersion'
         mavenVersionOption: 'Default'
+        goals: clean package -DskipTests
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
         sonarQubeRunAnalysis: true
+	      isJacocoCoverageReportXML: true
+        sqMavenPluginVersionChoice: 'latest'
+	      checkStyleRunAnalysis: true
+        pmdRunAnalysis: true
+        findBugsRunAnalysis: true
+
+
+
+    - task: sonarcloud-buildbreaker@2
+      displayName: 'Sonar Cloud Breaker'
+      inputs:
+        SonarCloud: 'csantiagos'
+        organization: 'csantiagos'
+
+    - task: SonarCloudPublish@1
+      displayName: 'Publicacion SonarCloud'
+      inputs:
+        pollingTimeoutSec: '60'
 
 - stage: SCA 
-  jobs:
+    jobs:
   - job: SCA
     displayName: '2 SCA'
     steps:
@@ -48,11 +71,15 @@ stages:
         mavenAuthenticateFeed: false
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
+    - script: find $(Build.SourcesDirectory) -name "*.jar"
     - task: dependency-check-build-task@6
+      displayName: 'Analisis de dependencias'
       inputs:
-        projectName: 'spring-boot-kubernetes'
-        scanPath: '$(Build.ArtifactStagingDirectory)'
+        projectName: 'Scan librerias'
+        scanPath: '**/*.jar'
         format: 'HTML'
+        failOnCVSS: '7'
+
 
 - stage: ContainerSecurity 
   jobs:
@@ -60,6 +87,7 @@ stages:
     displayName: '3 ContainerSecurity'
     steps:
     - task: Maven@3
+      displayName: Build app - Maven
       inputs:
         mavenPomFile: 'pom.xml'
         publishJUnitResults: true
@@ -71,6 +99,7 @@ stages:
         sonarQubeRunAnalysis: false
 
     - task: Docker@2
+      displayName: 'Registro de docker'
       inputs:
         containerRegistry: 'docker-csantiagos'
         command: 'login'
@@ -81,7 +110,7 @@ stages:
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
         tags: latest
-      displayName: Construir imagen
+      
 
     - script: | 
         sudo apt-get install -y rpm
